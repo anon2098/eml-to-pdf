@@ -1,0 +1,30 @@
+{
+  "name": "eml-to-pdf-converter",
+  "version": "1.0.0",
+  "description": "Batch convert EML files and metadata to PDFs using Brave browser",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "convert": "node index.js"
+  },
+  "dependencies": {
+    "eml-parse-js": "^1.0.8",
+    "puppeteer-core": "^21.6.1",
+    "commander": "^11.1.0",
+    "fs-extra": "^11.2.0",
+    "path": "^0.12.7",
+    "pdf-merger-js": "^5.0.0",
+    "date-fns": "^3.0.6",
+    "date-fns-tz": "^2.0.0"
+  },
+  "keywords": [
+    "eml",
+    "pdf",
+    "email",
+    "converter",
+    "batch"
+  ],
+  "author": "",
+  "license": "MIT"
+}

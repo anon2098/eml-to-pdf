@@ -2,10 +2,22 @@
   "name": "eml-to-pdf",
   "version": "1.0.0",
   "description": "Electron application to convert EML files to PDF",
+  "keywords": [],
+  "homepage": "https://github.com/anon2098/eml-to-pdf#readme",
+  "bugs": {
+    "url": "https://github.com/anon2098/eml-to-pdf"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anon2098/eml-to-pdf.git"
+  },
+  "license": "MIT",
+  "author": "Your Name",
+  "type": "commonjs",
+  "main": "main.js",
   "scripts": {
     "start": "electron ."
   },
-  "main": "main.js",
   "dependencies": {
     "electron": "^28.1.0",
     "electron-builder": "^25.0.0",
@@ -30,12 +42,5 @@
     "@electron-forge/maker-zip": "^7.0.1",
     "@electron-forge/publisher-github": "^7.0.1",
     "electron-forge": "^7.0.1"
-  },
-  "keywords": [],
-  "author": "Your Name",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "Your Repository URL"
   }
 }

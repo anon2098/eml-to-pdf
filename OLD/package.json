@@ -1,0 +1,21 @@
+{
+  "name": "eml-to-pdf",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "fs-extra": "^11.3.0",
+    "mime": "^4.0.7",
+    "mime-types": "^3.0.1",
+    "node-html-parser": "^7.0.1",
+    "puppeteer": "^24.15.0",
+    "typescript": "^5.9.2"
+  }
+}

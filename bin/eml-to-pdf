@@ -1,0 +1,141 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const { convertEmlToPdf, generateOutputFilename } = require('../convert.js');
+
+/**
+ * Display usage information
+ */
+function showUsage() {
+  console.log(`
+EML to PDF Converter CLI
+
+Usage:
+  eml-to-pdf <eml-file> [output-path]
+  eml-to-pdf <directory> [output-directory]
+  eml-to-pdf --help
+
+Options:
+  --help, -h    Show this help message
+
+Examples:
+  eml-to-pdf email.eml
+  eml-to-pdf email.eml output.pdf
+  eml-to-pdf ./emails/
+  eml-to-pdf ./emails/ ./output/
+`);
+}
+
+/**
+ * Process a single EML file
+ * @param {string} emlPath - Path to EML file
+ * @param {string} outputPath - Output path for PDF
+ */
+async function processFile(emlPath, outputPath) {
+  try {
+    console.log(`Converting: ${emlPath}`);
+    
+    // If no output path specified, generate one
+    if (!outputPath) {
+      outputPath = await generateOutputFilename(emlPath);
+    }
+    
+    await convertEmlToPdf(emlPath, outputPath);
+    console.log(`✓ Saved to: ${outputPath}`);
+  } catch (error) {
+    console.error(`✗ Error converting ${emlPath}:`, error.message);
+    process.exit(1);
+  }
+}
+
+/**
+ * Process all EML files in a directory
+ * @param {string} inputDir - Input directory
+ * @param {string} outputDir - Output directory
+ */
+async function processDirectory(inputDir, outputDir) {
+  try {
+    const files = fs.readdirSync(inputDir);
+    const emlFiles = files.filter(file => path.extname(file).toLowerCase() === '.eml');
+    
+    if (emlFiles.length === 0) {
+      console.log(`No EML files found in ${inputDir}`);
+      return;
+    }
+    
+    console.log(`Found ${emlFiles.length} EML file(s) in ${inputDir}`);
+    
+    for (const emlFile of emlFiles) {
+      const emlPath = path.join(inputDir, emlFile);
+      const outputPath = outputDir ? 
+        path.join(outputDir, path.basename(emlFile, '.eml') + '.pdf') :
+        await generateOutputFilename(emlPath);
+        
+      await processFile(emlPath, outputPath);
+    }
+    
+    console.log('All files processed successfully!');
+  } catch (error) {
+    console.error('Error processing directory:', error.message);
+    process.exit(1);
+  }
+}
+
+/**
+ * Main CLI entry point
+ */
+async function main() {
+  const args = process.argv.slice(2);
+  
+  // Show help if requested
+  if (args.includes('--help') || args.includes('-h') || args.length === 0) {
+    showUsage();
+    process.exit(0);
+  }
+  
+  const inputPath = args[0];
+  const outputPath = args[1];
+  
+  // Validate input path
+  if (!fs.existsSync(inputPath)) {
+    console.error(`Error: Input path does not exist: ${inputPath}`);
+    process.exit(1);
+  }
+  
+  const stat = fs.statSync(inputPath);
+  
+  if (stat.isFile()) {
+    // Process single file
+    if (path.extname(inputPath).toLowerCase() !== '.eml') {
+      console.error('Error: Input file must be an EML file');
+      process.exit(1);
+    }
+    await processFile(inputPath, outputPath);
+  } else if (stat.isDirectory()) {
+    // Process directory
+    if (outputPath) {
+      // Ensure output directory exists
+      if (!fs.existsSync(outputPath)) {
+        fs.mkdirSync(outputPath, { recursive: true });
+      }
+      
+      if (!fs.statSync(outputPath).isDirectory()) {
+        console.error('Error: Output path must be a directory when input is a directory');
+        process.exit(1);
+      }
+    }
+    await processDirectory(inputPath, outputPath);
+  } else {
+    console.error('Error: Input path is neither a file nor a directory');
+    process.exit(1);
+  }
+}
+
+// Run the CLI
+if (require.main === module) {
+  main().catch(error => {
+    console.error('Unexpected error:', error);
+    process.exit(1);
+  });
+}

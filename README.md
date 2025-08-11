@@ -1,83 +1,84 @@
 # EML to PDF Converter
 
-A Node.js application that converts EML email files to PDF format using both Puppeteer (for HTML rendering) and PDFKit (for text-based PDFs).
+A Node.js package that converts EML email files to PDF format with full attachments support.
 
 ## Features
 
 - Converts EML files to PDF format
-- Supports both HTML rendering (Puppeteer) and text-based PDFs (PDFKit)
-- Extracts email metadata from corresponding `.metadata.json` files
-- Handles attachments information
+- Preserves email metadata (subject, sender, receiver, date)
+- Handles HTML and plain text email content
+- Merges PDF attachments directly into the output PDF
+- Provides both programmatic API and CLI interface
 - Generates clean, formatted PDFs with email headers and content
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- Brave Browser (for Puppeteer rendering)
-- EML files with corresponding `.metadata.json` files
 
 ## Installation
 
-1. Install dependencies:
+### As a dependency in your project:
 ```bash
-npm install
+npm install eml-to-pdf-converter
 ```
 
-2. Make sure Brave Browser is installed at `/Applications/Brave Browser.app/Contents/MacOS/Brave Browser`
+### As a global CLI tool:
+```bash
+npm install -g eml-to-pdf-converter
+```
 
 ## Usage
 
-Run the converter with a directory containing EML files:
+### Command Line Interface (CLI)
 
+Convert a single EML file:
 ```bash
-node convert.js <email-directory>
+eml-to-pdf email.eml
+eml-to-pdf email.eml output.pdf
 ```
 
-Example:
+Convert all EML files in a directory:
 ```bash
-node convert.js ./emails
+eml-to-pdf ./emails/
+eml-to-pdf ./emails/ ./output/
 ```
 
-Or run app, and select file/folders
-'''bash
-npm start
-'''
-
-## File Structure
-
-The converter expects:
-- `.eml` files (email content)
-- `.metadata.json` files (email metadata) with the same base filename
-
-Example:
+Show help:
+```bash
+eml-to-pdf --help
 ```
-emails/
-├── email1.eml
-├── email1.metadata.json
-├── email2.eml
-├── email2.metadata.json
-└── output/          # Generated PDFs will be saved here
+
+### Programmatic API
+
+```javascript
+const { convertEmlToPdf, generateOutputFilename } = require('eml-to-pdf-converter');
+
+// Convert a single file
+async function convertFile() {
+  const outputPath = await generateOutputFilename('email.eml');
+  await convertEmlToPdf('email.eml', outputPath);
+  console.log('Conversion completed!');
+}
+
+convertFile();
 ```
 
 ## Output
 
-The converter generates two types of PDF files for each email:
-- `*_puppeteer.pdf` - HTML-rendered PDF with styling
-- `*_pdfkit.pdf` - Text-based PDF
+The converter generates a single PDF file for each email with:
+- Email headers (subject, sender, receiver, date)
+- Formatted email content (HTML or plain text)
+- Merged PDF attachments (when present)
 
-Files are saved in the `output/` subdirectory of the input directory.
+Files are saved with descriptive names in the format:
+`yyyy_mm_dd_hh_mm_ss_sender_to_receiver.pdf`
 
 ## Dependencies
 
-- `puppeteer` - For HTML to PDF conversion
-- `pdfkit` - For text-based PDF generation
-- `node-html-parser` - For parsing HTML content
-- `mime-types` - For MIME type handling
+- `mailparser` - For parsing EML files
+- `pdfkit` - For PDF generation
+- `pdf-lib` - For merging PDF attachments
 - `fs-extra` - Enhanced file system operations
 
 ## Notes
 
-- The converter uses Brave Browser for Puppeteer rendering
-- HTML content is stripped for PDFKit output
-- Attachments are listed but not included in the PDF
-- Timezone is set to Australia/Brisbane for date formatting 
+- HTML content is processed with basic formatting preservation
+- PDF attachments are automatically merged into the main PDF
+- Non-PDF attachments are listed in the PDF but not included
+- Works with Node.js version 14 and higher

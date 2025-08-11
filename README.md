@@ -38,6 +38,11 @@ Example:
 node convert.js ./emails
 ```
 
+Or run app, and select file/folders
+'''bash
+npm start
+'''
+
 ## File Structure
 
 The converter expects:
